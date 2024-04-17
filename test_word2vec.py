@@ -31,4 +31,4 @@ show_sim('bad', 'fresh')
 show_sim('bad', 'interesting')
 
 
-embed_map.save_word2vec_format(path_to_word2vec_txt, binary=True)
+# embed_map.save_word2vec_format(path_to_word2vec_txt, binary=True)
