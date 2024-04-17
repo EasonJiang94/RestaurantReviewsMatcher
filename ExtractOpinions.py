@@ -27,45 +27,58 @@ class ExtractOpinions:
         self.nlp = StanfordCoreNLP(host, port=port, timeout=10)  # adjust port if different
 
         
-
     def extract_pairs(self, review_id, review_content):
+        self._extract_pairs_by_nlp(review_id, review_content)
+
+    def _extract_pairs_by_nlp(self, review_id, review_content):
         # Parse the sentence using the CoreNLP server
         props = {'annotators': 'tokenize,ssplit,pos,lemma,depparse', 'pipelineLanguage': 'en', 'outputFormat': 'json'}
         parsed = json.loads(self.nlp.annotate(review_content, properties=props))
         for i, sentence in enumerate(parsed['sentences']):
             # print(f"{sentence = }")
             for j, dep in enumerate(sentence['enhancedPlusPlusDependencies']):
-                print(f"{review_id = }, {i = }, {j = }, {dep = }")
+                # print(f"{review_id = }, {i = }, {j = }, {dep = }")
                 if dep['dep'] == 'amod' and 'NN' in sentence['tokens'][dep['governor']-1]['pos']:
-                    # Extract the noun and adjective
                     attribute = sentence['tokens'][dep['governor']-1]['lemma']
                     assessment = sentence['tokens'][dep['dependent']-1]['lemma']
                     opinion = f"{attribute}, {assessment}"
-                    if opinion in self.extracted_opinions:
-                        if review_id not in self.extracted_opinions[opinion]:
-                            self.extracted_opinions[opinion].append(review_id)
-                    else:
-                        self.extracted_opinions[opinion] = [review_id]
+                    self.add_opinion(opinion, review_id)
 
+                # Handling nsubj with copula for extracting opinions like 'service is good'
+                elif dep['dep'] == 'nsubj' and any(d['dep'] == 'cop' for d in sentence['enhancedPlusPlusDependencies'] if d['governor'] == dep['governor']):
+                    attribute = sentence['tokens'][dep['dependent']-1]['lemma']
+                    assessment = sentence['tokens'][dep['governor']-1]['lemma']
+                    opinion = f"{attribute}, {assessment}"
+                    self.add_opinion(opinion, review_id)
+    def add_opinion(self, opinion, review_id):
+        if opinion in self.extracted_opinions:
+            if review_id not in self.extracted_opinions[opinion]:
+                self.extracted_opinions[opinion].append(review_id)
+        else:
+            self.extracted_opinions[opinion] = [review_id]
     def close(self):
         self.nlp.close()
 
-    def add_review(self, review_id, review_content):
-        self.extract_pairs(review_id, review_content)
+    def __del__(self):
+        self.close()
+
+    
 
 
 if __name__ == "__main__":
-    extractor = ExtractOpinions()
-    extractor.add_review(1, "The service is good and the food is excellent.")
-    extractor.add_review(2, "The menu is large, the portions are even larger, and the prices are reasonable.")
-    print(extractor.extracted_opinions)
-    extractor.close()
+    # extractor = ExtractOpinions()
+    # extractor.extract_pairs(1, "The service is good and the food is excellent.")
+    # extractor.extract_pairs(2, "The menu is large, the portions are even larger, and the prices are reasonable.")
+    # print(extractor.extracted_opinions)
 
-    # step_1_extract_opinion = ExtractOpinions()
-    # review_id = 1
-    # f = open('data/assign4_reviews.txt', 'r')
-    # for line in open('data/assign4_reviews.txt'):
-    #     review_content = f.readline()
-    #     step_1_extract_opinion.extract_pairs(review_id, review_content)
-    #     review_id = review_id + 1
-    # f.close()
+    step_1_extract_opinion = ExtractOpinions()
+    review_id = 1
+    f = open('data/assign4_reviews.txt', 'r')
+    for line in open('data/assign4_reviews.txt'):
+        review_content = f.readline()
+        step_1_extract_opinion.extract_pairs(review_id, review_content)
+        review_id = review_id + 1
+    f.close()
+    print(step_1_extract_opinion.extracted_opinions)
+
+    step_1_extract_opinion.close()

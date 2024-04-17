@@ -21,15 +21,16 @@ for tmp_opinion in extracted_opinions:
     review_ids = extracted_opinions[tmp_opinion]
     print("\n[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))
 print("\n--------------------------------------------------------------")
-
-# # Step 2: Find similar extracted opinions
-# cosine_sim = 0.8
-# step_2_find_similar_opinion = FindSimilarOpinions.FindSimilarOpinions(cosine_sim, extracted_opinions)
-# opinions = ["service, good", "service, bad", "atmosphere, good", "food, delicious"]
-# for query_opinion in opinions:
-#     print("\nquery opinion [" + query_opinion + "] has similar opinions: ")
-#     similar_opinions = step_2_find_similar_opinion.findSimilarOpinions(query_opinion)
-#     for tmp_opinion in similar_opinions:
-#         review_ids = similar_opinions[tmp_opinion]
-#         print("\n\t[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))
-# print("\n--------------------------------------------------------------")
+del(step_1_extract_opinion)
+# Step 2: Find similar extracted opinions
+cosine_sim = 0.8
+step_2_find_similar_opinion = FindSimilarOpinions.FindSimilarOpinions(cosine_sim, extracted_opinions)
+opinions = ["service, good", "service, bad", "atmosphere, good", "food, delicious"]
+for query_opinion in opinions:
+    print("\nquery opinion [" + query_opinion + "] has similar opinions: ")
+    similar_opinions = step_2_find_similar_opinion.findSimilarOpinions(query_opinion)
+    continue
+    for tmp_opinion in similar_opinions:
+        review_ids = similar_opinions[tmp_opinion]
+        print("\n\t[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))
+print("\n--------------------------------------------------------------")
