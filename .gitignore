@@ -1,2 +1,3 @@
 *.pyc
 .DS_Store
+stanford-corenlp-4.5.6/*
