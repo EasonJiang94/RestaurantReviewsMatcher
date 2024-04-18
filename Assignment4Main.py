@@ -19,7 +19,7 @@ f.close()
 extracted_opinions = step_1_extract_opinion.extracted_opinions
 for tmp_opinion in extracted_opinions:
     review_ids = extracted_opinions[tmp_opinion]
-    print("\n[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))
+    print("[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))
 print("\n--------------------------------------------------------------")
 del(step_1_extract_opinion)
 # Step 2: Find similar extracted opinions
