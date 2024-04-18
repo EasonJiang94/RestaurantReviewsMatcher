@@ -29,7 +29,7 @@ opinions = ["service, good", "service, bad", "atmosphere, good", "food, deliciou
 for query_opinion in opinions:
     print("\nquery opinion [" + query_opinion + "] has similar opinions: ")
     similar_opinions = step_2_find_similar_opinion.findSimilarOpinions(query_opinion)
-    continue
+    
     for tmp_opinion in similar_opinions:
         review_ids = similar_opinions[tmp_opinion]
         print("\n\t[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))

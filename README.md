@@ -18,7 +18,7 @@ pip install scipy==1.10.1
 ```
 
 # Usage
-After you setup your env, run the CoreNLP server:
+After you setup your env, run the CoreNLP server under the directory `stanford-corenlp-4.x.x`:
 ```bash=1
 java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000
 ```
