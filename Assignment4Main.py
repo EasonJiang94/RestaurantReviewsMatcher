@@ -32,5 +32,5 @@ for query_opinion in opinions:
     
     for tmp_opinion in similar_opinions:
         review_ids = similar_opinions[tmp_opinion]
-        print("\n\t[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))
+        print("\t[" + tmp_opinion + "] appears in review " + "\t" + " ".join(str(review_ids)))
 print("\n--------------------------------------------------------------")

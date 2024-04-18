@@ -10,7 +10,7 @@ class FindSimilarOpinions:
     extracted_opinions = {}
     word2VecObject = []
     cosine_sim = 0
-
+    noun_sim_thres = 0.3
     def __init__(self, input_cosine_sim, input_extracted_ops):
         self.cosine_sim = input_cosine_sim
         self.extracted_opinions = input_extracted_ops
@@ -26,7 +26,8 @@ class FindSimilarOpinions:
         except KeyError:
             return 0
 
-    def findSimilarOpinions(self, query_opinion):
+
+    def mining(self, query_opinion):
         noun, adj = query_opinion.split(", ")
         top_15_sim_adj_good = []
         top_15_sim_adj_bad = []
@@ -37,7 +38,7 @@ class FindSimilarOpinions:
         self.recorded_adj = {}
         # Iterate over each extracted opinion
         for extracted_opinion in self.extracted_opinions:
-            _, ex_adj = extracted_opinion.split(", ")
+            ex_noun, ex_adj = extracted_opinion.split(", ")
             
             # Avoid recalculating for the same adjective
             if ex_adj in self.recorded_adj:
@@ -69,7 +70,26 @@ class FindSimilarOpinions:
         for score, adjective in closer_group:
             print(f"{adjective}: {score}")
 
-        return []
-        example_similarity = self.get_word_sim("great", "good")
-        similar_opinions = {'service, good': [1, 2, 3], 'service, excellent': [11, 12]}
+
+    def findSimilarOpinions(self, query_opinion):
+        # self.mining(query_opinion)
+        similar_opinions = {}
+        noun, adj = query_opinion.split(", ")
+        sim_to_good = self.get_word_sim(adj, "good")
+        sim_to_bad = self.get_word_sim(adj, "bad")
+        is_positive = sim_to_good > sim_to_bad
+        for extracted_opinion in self.extracted_opinions:
+            ex_noun, ex_adj = extracted_opinion.split(", ")
+            sim_noun = self.get_word_sim(noun, ex_noun)
+            if sim_noun < FindSimilarOpinions.noun_sim_thres:
+                continue
+            ex_adj_sim_to_good = self.get_word_sim(ex_adj, "good")
+            ex_adj_sim_to_bad = self.get_word_sim(ex_adj, "bad")
+            ex_adj_is_positive = ex_adj_sim_to_good > ex_adj_sim_to_bad
+            if is_positive == ex_adj_is_positive:
+                similar_opinions[extracted_opinion] = self.extracted_opinions[extracted_opinion]
+
+
+        # similar_opinions = {'service, good': [1, 2, 3], 'service, excellent': [11, 12]}
+        # similar_opinions = {'service, good': [1, 2, 3], 'service, excellent': [11, 12]}
         return similar_opinions
